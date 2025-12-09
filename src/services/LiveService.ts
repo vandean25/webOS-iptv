@@ -65,6 +65,14 @@ class LiveService {
       throw error;
     }
   }
+
+  public getStreamUrl(streamId: number, extension: string = 'm3u8'): string {
+    const creds = LoginService.getStoredCredentials();
+    if (!creds) return '';
+    const baseUrl = this.getBaseUrl();
+    const { username, password } = creds;
+    return `${baseUrl}/live/${username}/${password}/${streamId}.${extension}`;
+  }
 }
 
 export default LiveService.getInstance();

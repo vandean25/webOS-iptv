@@ -1,18 +1,29 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useFocusable, FocusContext } from '@noriginmedia/norigin-spatial-navigation';
 import classNames from 'classnames';
 import type { XtreamStream } from '../types/xtream';
 
-interface ChannelListProps {
-  channels: XtreamStream[];
-  selectedChannelId: number | null;
-  onSelectChannel: (id: number) => void;
-}
-
-const ChannelItem = ({ channel, isSelected, onSelect }: { channel: XtreamStream, isSelected: boolean, onSelect: () => void }) => {
+const ChannelItem = ({
+    channel,
+    isSelected,
+    onSelect,
+    onPlay
+}: {
+    channel: XtreamStream,
+    isSelected: boolean,
+    onSelect: () => void,
+    onPlay: () => void
+}) => {
   const { ref, focused } = useFocusable({
-    onEnterPress: onSelect,
+    onEnterPress: onPlay,
+    onFocus: onSelect
   });
+
+  useEffect(() => {
+    if (focused) {
+        onSelect();
+    }
+  }, [focused]);
 
   return (
     <div
@@ -39,7 +50,14 @@ const ChannelItem = ({ channel, isSelected, onSelect }: { channel: XtreamStream,
   );
 };
 
-export const ChannelList: React.FC<ChannelListProps> = ({ channels, selectedChannelId, onSelectChannel }) => {
+interface ChannelListProps {
+  channels: XtreamStream[];
+  selectedChannelId: number | null;
+  onSelectChannel: (id: number) => void;
+  onPlayChannel: (id: number) => void;
+}
+
+export const ChannelList: React.FC<ChannelListProps> = ({ channels, selectedChannelId, onSelectChannel, onPlayChannel }) => {
   const { ref, focusKey } = useFocusable({
     focusKey: 'CHANNEL_LIST',
     trackChildren: true
@@ -56,6 +74,7 @@ export const ChannelList: React.FC<ChannelListProps> = ({ channels, selectedChan
                 channel={channel}
                 isSelected={channel.stream_id === selectedChannelId}
                 onSelect={() => onSelectChannel(channel.stream_id)}
+                onPlay={() => onPlayChannel(channel.stream_id)}
             />
             ))}
             {channels.length === 0 && (

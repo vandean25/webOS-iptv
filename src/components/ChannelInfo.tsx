@@ -1,11 +1,18 @@
 import React from 'react';
 import type { XtreamStream } from '../types/xtream';
+import { useFocusable } from '@noriginmedia/norigin-spatial-navigation';
 
 interface ChannelInfoProps {
   channel: XtreamStream | null;
+  onWatch: () => void;
 }
 
-export const ChannelInfo: React.FC<ChannelInfoProps> = ({ channel }) => {
+export const ChannelInfo: React.FC<ChannelInfoProps> = ({ channel, onWatch }) => {
+  const { ref, focused } = useFocusable({
+      focusKey: 'WATCH_BUTTON',
+      onEnterPress: onWatch
+  });
+
   if (!channel) {
     return (
       <div className="flex-1 flex items-center justify-center bg-background text-gray-600">
@@ -36,7 +43,11 @@ export const ChannelInfo: React.FC<ChannelInfoProps> = ({ channel }) => {
           </div>
 
           <div className="mt-8">
-             <button className="bg-primary text-white px-8 py-3 rounded font-bold uppercase tracking-wider">
+             <button
+                ref={ref}
+                onClick={onWatch}
+                className={`px-8 py-3 rounded font-bold uppercase tracking-wider transition-all ${focused ? 'bg-primary text-white scale-110' : 'bg-gray-700 text-gray-300'}`}
+             >
                  Watch Now
              </button>
           </div>

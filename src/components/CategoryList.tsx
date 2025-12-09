@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useFocusable, FocusContext } from '@noriginmedia/norigin-spatial-navigation';
 import classNames from 'classnames';
 import type { XtreamCategory } from '../types/xtream';
@@ -12,17 +12,7 @@ interface CategoryListProps {
 const CategoryItem = ({ category, isSelected, onSelect }: { category: XtreamCategory, isSelected: boolean, onSelect: () => void }) => {
   const { ref, focused } = useFocusable({
     onEnterPress: onSelect,
-    onFocus: onSelect, // Auto-select on focus? Usually better to require Enter, but for categories browsing "peek" is common.
-                       // Let's stick to Enter or specialized logic. For now, let's keep it simple: Select on Enter.
-                       // Actually, typical TV UI selects category on Focus to update the right pane immediately.
   });
-
-  // Let's implement "Select on Focus" for categories to preview channels immediately
-  useEffect(() => {
-    if (focused) {
-      onSelect();
-    }
-  }, [focused]);
 
   return (
     <div

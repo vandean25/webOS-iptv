@@ -10,11 +10,15 @@ interface LiveState {
   isLoadingCategories: boolean;
   isLoadingChannels: boolean;
   error: string | null;
+  isPlayerActive: boolean;
 
   // Actions
   fetchCategories: () => Promise<void>;
   selectCategory: (categoryId: string) => Promise<void>;
   selectChannel: (channelId: number) => void;
+  setPlayerActive: (active: boolean) => void;
+  nextChannel: () => void;
+  prevChannel: () => void;
   reset: () => void;
 }
 
@@ -26,6 +30,7 @@ export const useLiveStore = create<LiveState>((set, get) => ({
   isLoadingCategories: false,
   isLoadingChannels: false,
   error: null,
+  isPlayerActive: false,
 
   fetchCategories: async () => {
     set({ isLoadingCategories: true, error: null });
@@ -54,6 +59,32 @@ export const useLiveStore = create<LiveState>((set, get) => ({
 
   selectChannel: (channelId: number) => {
     set({ selectedChannelId: channelId });
+  },
+
+  setPlayerActive: (active: boolean) => {
+    set({ isPlayerActive: active });
+  },
+
+  nextChannel: () => {
+    const { channels, selectedChannelId } = get();
+    if (!channels.length || selectedChannelId === null) return;
+
+    const currentIndex = channels.findIndex(c => c.stream_id === selectedChannelId);
+    if (currentIndex === -1) return;
+
+    const nextIndex = (currentIndex + 1) % channels.length;
+    set({ selectedChannelId: channels[nextIndex].stream_id });
+  },
+
+  prevChannel: () => {
+    const { channels, selectedChannelId } = get();
+    if (!channels.length || selectedChannelId === null) return;
+
+    const currentIndex = channels.findIndex(c => c.stream_id === selectedChannelId);
+    if (currentIndex === -1) return;
+
+    const prevIndex = (currentIndex - 1 + channels.length) % channels.length;
+    set({ selectedChannelId: channels[prevIndex].stream_id });
   },
 
   reset: () => {
