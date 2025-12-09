@@ -1,13 +1,62 @@
 import React from 'react';
-import type { XtreamStream } from '../types/xtream';
+import type { XtreamStream, XtreamEPGResponse } from '../types/xtream';
 import { useFocusable } from '@noriginmedia/norigin-spatial-navigation';
+import { Skeleton } from './Skeleton';
 
 interface ChannelInfoProps {
   channel: XtreamStream | null;
+  epg: XtreamEPGResponse | null;
+  isLoadingEPG?: boolean;
   onWatch: () => void;
 }
 
-export const ChannelInfo: React.FC<ChannelInfoProps> = ({ channel, onWatch }) => {
+const EPGDisplay = ({ epg }: { epg: XtreamEPGResponse | null }) => {
+    if (!epg || !epg.epg_listings || epg.epg_listings.length === 0) {
+        return <p className="italic text-gray-500">No Program Information Available</p>;
+    }
+
+    // Sort listings? Usually they are sorted.
+    // Assuming first is current.
+    const currentProgram = epg.epg_listings[0];
+    const nextProgram = epg.epg_listings[1];
+
+    // Calculate progress if timestamps available
+    // decode base64 titles if needed (Xtream sometimes sends base64). But types say string. assuming plain text or handled by service.
+    // Usually they are base64 encoded!
+    // Let's assume plain text for now, or check if they look like base64.
+    // Xtream often sends plain text JSON unless configured otherwise.
+
+    // Decoding helper (basic)
+    const decode = (str: string) => {
+        try {
+             return atob(str);
+        } catch (e) {
+             return str;
+        }
+    };
+
+    // Wait, standard Xtream response for short_epg is often NOT base64 encoded for title/desc.
+    // But `epg_listings` usually has `title`, `description`.
+
+    return (
+        <div className="text-left w-full mt-4 bg-black/20 p-4 rounded-lg backdrop-blur-sm">
+            <h3 className="text-xl font-bold text-white mb-1">{decode(currentProgram.title)}</h3>
+            <p className="text-sm text-gray-400 mb-2">
+                {currentProgram.start.substring(11, 16)} - {currentProgram.end.substring(11, 16)}
+            </p>
+            <p className="text-gray-300 text-sm mb-4 line-clamp-3">{decode(currentProgram.description)}</p>
+
+            {nextProgram && (
+                <div className="border-t border-gray-700 pt-2">
+                    <span className="text-xs uppercase text-gray-500 font-bold">Next:</span>
+                    <p className="text-sm text-gray-300">{decode(nextProgram.title)}</p>
+                </div>
+            )}
+        </div>
+    );
+};
+
+export const ChannelInfo: React.FC<ChannelInfoProps> = ({ channel, epg, isLoadingEPG, onWatch }) => {
   const { ref, focused } = useFocusable({
       focusKey: 'WATCH_BUTTON',
       onEnterPress: onWatch
@@ -37,9 +86,12 @@ export const ChannelInfo: React.FC<ChannelInfoProps> = ({ channel, onWatch }) =>
           <p className="text-gray-400 mb-2">Stream ID: {channel.stream_id}</p>
           <p className="text-gray-400">Added: {new Date(parseInt(channel.added) * 1000).toLocaleDateString()}</p>
           {/* EPG placeholder */}
-          <div className="mt-8 border-t border-gray-700 pt-4">
-              <h3 className="text-xl font-semibold mb-2">Current Program</h3>
-              <p className="italic text-gray-500">EPG information not available yet.</p>
+          <div className="mt-8 border-t border-gray-700 pt-4 w-full">
+              {isLoadingEPG ? (
+                  <Skeleton count={3} className="h-4" />
+              ) : (
+                  <EPGDisplay epg={epg} />
+              )}
           </div>
 
           <div className="mt-8">

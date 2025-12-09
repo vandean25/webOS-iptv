@@ -14,6 +14,10 @@ const LiveTVPage: React.FC = () => {
     channels,
     selectedCategoryId,
     selectedChannelId,
+    epg,
+    isLoadingCategories,
+    isLoadingChannels,
+    isLoadingEPG,
     isPlayerActive,
     fetchCategories,
     selectCategory,
@@ -86,6 +90,7 @@ const LiveTVPage: React.FC = () => {
         categories={categories}
         selectedCategoryId={selectedCategoryId}
         onSelectCategory={selectCategory}
+        isLoading={isLoadingCategories}
       />
 
       {/* Pane 2: Channels */}
@@ -97,11 +102,14 @@ const LiveTVPage: React.FC = () => {
             selectChannel(id);
             setPlayerActive(true);
         }}
+        isLoading={isLoadingChannels}
       />
 
       {/* Pane 3: Info */}
       <ChannelInfo
         channel={selectedChannel}
+        epg={epg}
+        isLoadingEPG={isLoadingEPG}
         onWatch={() => setPlayerActive(true)}
       />
     </div>

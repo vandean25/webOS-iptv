@@ -55,3 +55,20 @@ export interface XtreamStream {
   direct_source: string;
   tv_archive_duration: number;
 }
+
+export interface XtreamEPGListing {
+  id: string;
+  epg_id: string;
+  title: string;
+  lang: string;
+  start: string; // timestamp or date string depending on API, usually YYYY-MM-DD HH:mm:ss but encoded
+  end: string;
+  description: string;
+  channel_id: string;
+  start_timestamp: string; // Unix timestamp
+  stop_timestamp: string;  // Unix timestamp
+}
+
+export interface XtreamEPGResponse {
+  epg_listings: XtreamEPGListing[];
+}

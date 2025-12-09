@@ -1,6 +1,6 @@
 import axios from 'axios';
 import LoginService from './LoginService';
-import type { XtreamCategory, XtreamStream } from '../types/xtream';
+import type { XtreamCategory, XtreamStream, XtreamEPGResponse } from '../types/xtream';
 
 class LiveService {
   private static instance: LiveService;
@@ -72,6 +72,27 @@ class LiveService {
     const baseUrl = this.getBaseUrl();
     const { username, password } = creds;
     return `${baseUrl}/live/${username}/${password}/${streamId}.${extension}`;
+  }
+
+  public async getShortEPG(streamId: number, limit: number = 4): Promise<XtreamEPGResponse> {
+      const baseUrl = this.getBaseUrl();
+      // standard Xtream API call for short EPG
+      // action=get_short_epg&stream_id=ID&limit=LIMIT
+      try {
+        const response = await axios.get<XtreamEPGResponse>(`${baseUrl}/player_api.php`, {
+            params: {
+                ...this.getAuthParams(),
+                action: 'get_short_epg',
+                stream_id: streamId,
+                limit
+            }
+        });
+        return response.data;
+      } catch (error) {
+        console.error('Failed to fetch EPG', error);
+        // Return empty structure on failure to prevent UI crash
+        return { epg_listings: [] };
+      }
   }
 }
 

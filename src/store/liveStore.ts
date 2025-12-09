@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { XtreamCategory, XtreamStream } from '../types/xtream';
+import type { XtreamCategory, XtreamStream, XtreamEPGResponse } from '../types/xtream';
 import LiveService from '../services/LiveService';
 
 interface LiveState {
@@ -7,8 +7,10 @@ interface LiveState {
   channels: XtreamStream[];
   selectedCategoryId: string | null;
   selectedChannelId: number | null;
+  epg: XtreamEPGResponse | null;
   isLoadingCategories: boolean;
   isLoadingChannels: boolean;
+  isLoadingEPG: boolean;
   error: string | null;
   isPlayerActive: boolean;
 
@@ -27,8 +29,10 @@ export const useLiveStore = create<LiveState>((set, get) => ({
   channels: [],
   selectedCategoryId: null,
   selectedChannelId: null,
+  epg: null,
   isLoadingCategories: false,
   isLoadingChannels: false,
+  isLoadingEPG: false,
   error: null,
   isPlayerActive: false,
 
@@ -58,7 +62,11 @@ export const useLiveStore = create<LiveState>((set, get) => ({
   },
 
   selectChannel: (channelId: number) => {
-    set({ selectedChannelId: channelId });
+    set({ selectedChannelId: channelId, epg: null, isLoadingEPG: true });
+    // Fetch EPG in background
+    LiveService.getShortEPG(channelId)
+        .then(epg => set({ epg, isLoadingEPG: false }))
+        .catch(() => set({ epg: null, isLoadingEPG: false }));
   },
 
   setPlayerActive: (active: boolean) => {
@@ -66,25 +74,27 @@ export const useLiveStore = create<LiveState>((set, get) => ({
   },
 
   nextChannel: () => {
-    const { channels, selectedChannelId } = get();
+    const { channels, selectedChannelId, selectChannel } = get();
     if (!channels.length || selectedChannelId === null) return;
 
     const currentIndex = channels.findIndex(c => c.stream_id === selectedChannelId);
     if (currentIndex === -1) return;
 
     const nextIndex = (currentIndex + 1) % channels.length;
-    set({ selectedChannelId: channels[nextIndex].stream_id });
+    // Use selectChannel to reuse EPG fetching logic
+    selectChannel(channels[nextIndex].stream_id);
   },
 
   prevChannel: () => {
-    const { channels, selectedChannelId } = get();
+    const { channels, selectedChannelId, selectChannel } = get();
     if (!channels.length || selectedChannelId === null) return;
 
     const currentIndex = channels.findIndex(c => c.stream_id === selectedChannelId);
     if (currentIndex === -1) return;
 
     const prevIndex = (currentIndex - 1 + channels.length) % channels.length;
-    set({ selectedChannelId: channels[prevIndex].stream_id });
+    // Use selectChannel to reuse EPG fetching logic
+    selectChannel(channels[prevIndex].stream_id);
   },
 
   reset: () => {
@@ -93,6 +103,7 @@ export const useLiveStore = create<LiveState>((set, get) => ({
       channels: [],
       selectedCategoryId: null,
       selectedChannelId: null,
+      epg: null,
       error: null
     });
   }
