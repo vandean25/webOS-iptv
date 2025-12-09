@@ -33,7 +33,11 @@ const DashboardPage: React.FC = () => {
              <p><span className="text-gray-400">Active Connections:</span> {userInfo?.active_cons} / {userInfo?.max_connections}</p>
         </div>
 
-        {/* We need a FocusableButton here. Importing locally to avoid circular deps if any, usually fine. */}
+        <div className="grid grid-cols-2 gap-4 mb-8">
+             <FocusableButton label="Live TV" onClick={() => navigate('/live')} className="w-full bg-blue-600" />
+             <FocusableButton label="VOD" onClick={() => {}} className="w-full bg-gray-600" disabled />
+        </div>
+
         <LogoutButton onLogout={handleLogout} />
       </div>
     </div>

@@ -1,0 +1,70 @@
+import axios from 'axios';
+import LoginService from './LoginService';
+import type { XtreamCategory, XtreamStream } from '../types/xtream';
+
+class LiveService {
+  private static instance: LiveService;
+
+  private constructor() {}
+
+  public static getInstance(): LiveService {
+    if (!LiveService.instance) {
+      LiveService.instance = new LiveService();
+    }
+    return LiveService.instance;
+  }
+
+  private getBaseUrl(): string {
+    const creds = LoginService.getStoredCredentials();
+    if (!creds) throw new Error('No credentials found');
+    return creds.url.endsWith('/') ? creds.url.slice(0, -1) : creds.url;
+  }
+
+  private getAuthParams() {
+    const creds = LoginService.getStoredCredentials();
+    if (!creds) throw new Error('No credentials found');
+    return {
+      username: creds.username,
+      password: creds.password
+    };
+  }
+
+  public async getLiveCategories(): Promise<XtreamCategory[]> {
+    const baseUrl = this.getBaseUrl();
+    try {
+      const response = await axios.get<XtreamCategory[]>(`${baseUrl}/player_api.php`, {
+        params: {
+          ...this.getAuthParams(),
+          action: 'get_live_categories'
+        }
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Failed to fetch categories', error);
+      throw error;
+    }
+  }
+
+  public async getLiveStreams(categoryId?: string): Promise<XtreamStream[]> {
+    const baseUrl = this.getBaseUrl();
+    const params: any = {
+      ...this.getAuthParams(),
+      action: 'get_live_streams'
+    };
+    if (categoryId) {
+      params.category_id = categoryId;
+    }
+
+    try {
+      const response = await axios.get<XtreamStream[]>(`${baseUrl}/player_api.php`, {
+        params
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Failed to fetch streams', error);
+      throw error;
+    }
+  }
+}
+
+export default LiveService.getInstance();

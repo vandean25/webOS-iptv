@@ -15,7 +15,7 @@ interface AuthState {
   checkSession: () => void;
 }
 
-export const useAuthStore = create<AuthState>((set) => ({
+export const useAuthStore = create<AuthState>((set, get) => ({
   isAuthenticated: false,
   userInfo: null,
   serverInfo: null,
@@ -53,19 +53,17 @@ export const useAuthStore = create<AuthState>((set) => ({
   },
 
   checkSession: () => {
-      // In a real app, we might want to validate the stored token/credentials with the API silently here.
-      // For now, if we have stored credentials, we might need to re-login to get the latest session data
-      // or just load the last known state if persisted.
-      // Since LoginService stores credentials, let's auto-login if they exist.
       const stored = LoginService.getStoredCredentials();
       if (stored) {
-          // We trigger a login in background? Or just let the user click 'connect'?
-          // Usually auto-login is better.
-          // For now, let's just mark that we *can* login, but maybe we shouldn't block rendering.
-          // A robust way:
-          // We can't be "Authenticated" just by having credentials, we need the session data (user_info).
-          // So checkSession should probably try to login.
-          // Let's implement this later or manually call login from the UI on mount if credentials exist.
+          // Restore basic session state.
+          // Ideally we should validate with API, but for immediate UX:
+          set({ isAuthenticated: true, isLoading: false });
+
+          // Trigger background validation/login to get full user info
+          get().login(stored).catch(() => {
+             // If background login fails, logout
+             get().logout();
+          });
       }
   }
 }));

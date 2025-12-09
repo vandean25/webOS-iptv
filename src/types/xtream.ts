@@ -34,3 +34,24 @@ export interface XtreamCredentials {
   username: string;
   password: string;
 }
+
+export interface XtreamCategory {
+  category_id: string;
+  category_name: string;
+  parent_id: number;
+}
+
+export interface XtreamStream {
+  num: number;
+  name: string;
+  stream_type: string;
+  stream_id: number;
+  stream_icon: string;
+  epg_channel_id: string;
+  added: string;
+  category_id: string;
+  custom_sid: string;
+  tv_archive: number;
+  direct_source: string;
+  tv_archive_duration: number;
+}
