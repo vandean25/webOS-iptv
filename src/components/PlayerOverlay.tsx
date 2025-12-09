@@ -1,5 +1,4 @@
 import React from 'react';
-import classNames from 'classnames';
 import type { QualityTags } from '../utils/streamUtils';
 
 interface PlayerOverlayProps {
