@@ -67,6 +67,8 @@ const LiveTVPage: React.FC = () => {
           <div className="fixed inset-0 bg-black z-50">
               <VideoPlayer
                   src={streamUrl}
+                  channelName={selectedChannel.name}
+                  overlayVisible={overlayVisible}
                   className="w-full h-full"
                   onError={(e) => console.error("Video Error", e)}
               />
