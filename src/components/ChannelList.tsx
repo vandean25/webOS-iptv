@@ -7,6 +7,7 @@ import { useFavorites } from '../hooks/useFavorites';
 import { useTVRemote } from '../hooks/useTVRemote';
 import { FocusableInput } from './FocusableInput';
 import { useLiveStore } from '../store/liveStore';
+import { getStreamQualityTags } from '../utils/streamUtils';
 
 const ChannelItem = ({
     channel,
@@ -28,6 +29,7 @@ const ChannelItem = ({
 
   const { isFavorite } = useFavorites();
   const isFav = isFavorite(channel.stream_id);
+  const tags = getStreamQualityTags(channel.name);
 
   useEffect(() => {
     if (focused) {
@@ -46,7 +48,7 @@ const ChannelItem = ({
     <div
       ref={ref}
       className={classNames(
-        'p-3 cursor-pointer border-b border-gray-800 flex items-center space-x-3 transition-all',
+        'p-3 cursor-pointer border-b border-gray-800 flex items-center space-x-3 transition-all relative',
         {
           'bg-primary text-white scale-105 z-10': focused,
           'bg-transparent text-gray-300': !focused,
@@ -55,14 +57,21 @@ const ChannelItem = ({
       )}
       onClick={onSelect}
     >
-        <div className="w-8 h-8 bg-black rounded flex-shrink-0 overflow-hidden">
+        <div className="w-8 h-8 bg-black rounded flex-shrink-0 overflow-hidden relative">
             {channel.stream_icon ? (
                 <img src={channel.stream_icon} alt="" className="w-full h-full object-cover" onError={(e) => (e.target as any).style.display = 'none'} />
             ) : (
                 <div className="text-xs flex items-center justify-center h-full text-gray-500">TV</div>
             )}
         </div>
-        <span className="truncate flex-1">{channel.name}</span>
+
+        <div className="flex-1 min-w-0 flex flex-col justify-center">
+             <span className="truncate text-sm">{channel.name}</span>
+             <div className="flex space-x-1 mt-0.5">
+                {tags.is4K && <span className="text-[10px] leading-none px-1 rounded bg-yellow-500 text-black font-bold">4K</span>}
+                {tags.isHEVC && <span className="text-[10px] leading-none px-1 rounded bg-blue-600 text-white font-bold">HEVC</span>}
+             </div>
+        </div>
 
         {/* Favorite Icon / Button */}
         <div onClick={(e) => { e.stopPropagation(); onToggleFavorite(); }} className="cursor-pointer p-1">
