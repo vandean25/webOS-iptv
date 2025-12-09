@@ -1,30 +1,46 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useFocusable, FocusContext } from '@noriginmedia/norigin-spatial-navigation';
 import classNames from 'classnames';
 import type { XtreamStream } from '../types/xtream';
 import { Skeleton } from './Skeleton';
+import { useFavorites } from '../hooks/useFavorites';
+import { useTVRemote } from '../hooks/useTVRemote';
+import { FocusableInput } from './FocusableInput';
+import { useLiveStore } from '../store/liveStore';
 
 const ChannelItem = ({
     channel,
     isSelected,
     onSelect,
-    onPlay
+    onPlay,
+    onToggleFavorite
 }: {
     channel: XtreamStream,
     isSelected: boolean,
     onSelect: () => void,
-    onPlay: () => void
+    onPlay: () => void,
+    onToggleFavorite: () => void
 }) => {
   const { ref, focused } = useFocusable({
     onEnterPress: onPlay,
     onFocus: onSelect
   });
 
+  const { isFavorite } = useFavorites();
+  const isFav = isFavorite(channel.stream_id);
+
   useEffect(() => {
     if (focused) {
         onSelect();
     }
   }, [focused]);
+
+  // Handle Red Button for Favorites on current item
+  useTVRemote({
+      'Red': () => {
+          if (focused) onToggleFavorite();
+      }
+  }, focused);
 
   return (
     <div
@@ -46,7 +62,20 @@ const ChannelItem = ({
                 <div className="text-xs flex items-center justify-center h-full text-gray-500">TV</div>
             )}
         </div>
-        <span className="truncate">{channel.name}</span>
+        <span className="truncate flex-1">{channel.name}</span>
+
+        {/* Favorite Icon / Button */}
+        <div onClick={(e) => { e.stopPropagation(); onToggleFavorite(); }} className="cursor-pointer p-1">
+            {isFav ? (
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-red-500" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clipRule="evenodd" />
+                </svg>
+            ) : (
+                 <svg xmlns="http://www.w3.org/2000/svg" className={classNames("h-5 w-5", focused ? "text-white/50" : "text-gray-600")} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                </svg>
+            )}
+        </div>
     </div>
   );
 };
@@ -65,27 +94,61 @@ export const ChannelList: React.FC<ChannelListProps> = ({ channels, selectedChan
     trackChildren: true
   });
 
+  const { isSearchActive, setSearchQuery, updateFavorites } = useLiveStore();
+  const { toggleFavorite } = useFavorites();
+  const [searchInput, setSearchInput] = useState('');
+
+  // Debounce search
+  useEffect(() => {
+      const timer = setTimeout(() => {
+          if (isSearchActive) {
+              setSearchQuery(searchInput);
+          }
+      }, 500); // 500ms debounce
+      return () => clearTimeout(timer);
+  }, [searchInput, isSearchActive, setSearchQuery]);
+
+  const handleToggleFavorite = (id: number) => {
+      toggleFavorite(id);
+      updateFavorites(); // Refresh list if we are in Favorites category
+  };
+
   return (
     <FocusContext.Provider value={focusKey}>
-      <div ref={ref} className="h-full overflow-y-auto bg-background/80 backdrop-blur-md w-80 border-r border-gray-800">
-         <div className="p-2">
+      <div ref={ref} className="h-full overflow-y-auto bg-background/80 backdrop-blur-md w-80 border-r border-gray-800 flex flex-col">
+
+         {isSearchActive && (
+             <div className="p-2 border-b border-gray-700">
+                 <FocusableInput
+                    placeholder="Search channels..."
+                    value={searchInput}
+                    onChange={(e) => setSearchInput(e.target.value)}
+                    className="w-full bg-gray-800 border border-gray-700 text-white rounded p-2"
+                 />
+             </div>
+         )}
+
+         <div className="p-2 flex-1 overflow-y-auto">
             {isLoading ? (
                 <div className="space-y-3 p-2">
                     <Skeleton className="h-10" count={10} />
                 </div>
             ) : (
                 <>
-                    {channels.map((channel) => (
+                    {(Array.isArray(channels) ? channels : []).map((channel) => (
                     <ChannelItem
                         key={channel.stream_id}
                         channel={channel}
                         isSelected={channel.stream_id === selectedChannelId}
                         onSelect={() => onSelectChannel(channel.stream_id)}
                         onPlay={() => onPlayChannel(channel.stream_id)}
+                        onToggleFavorite={() => handleToggleFavorite(channel.stream_id)}
                     />
                     ))}
                     {channels.length === 0 && (
-                        <div className="p-4 text-center text-gray-500">No channels found</div>
+                        <div className="p-4 text-center text-gray-500">
+                            {isSearchActive ? 'Type to search...' : 'No channels found'}
+                        </div>
                     )}
                 </>
             )}
