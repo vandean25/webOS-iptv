@@ -2,6 +2,7 @@ import React from 'react';
 import type { XtreamStream, XtreamEPGResponse } from '../types/xtream';
 import { useFocusable } from '@noriginmedia/norigin-spatial-navigation';
 import { Skeleton } from './Skeleton';
+import { getStreamQualityTags } from '../utils/streamUtils';
 
 interface ChannelInfoProps {
   channel: XtreamStream | null;
@@ -15,18 +16,9 @@ const EPGDisplay = ({ epg }: { epg: XtreamEPGResponse | null }) => {
         return <p className="italic text-gray-500">No Program Information Available</p>;
     }
 
-    // Sort listings? Usually they are sorted.
-    // Assuming first is current.
     const currentProgram = epg.epg_listings[0];
     const nextProgram = epg.epg_listings[1];
 
-    // Calculate progress if timestamps available
-    // decode base64 titles if needed (Xtream sometimes sends base64). But types say string. assuming plain text or handled by service.
-    // Usually they are base64 encoded!
-    // Let's assume plain text for now, or check if they look like base64.
-    // Xtream often sends plain text JSON unless configured otherwise.
-
-    // Decoding helper (basic)
     const decode = (str: string) => {
         try {
              return atob(str);
@@ -34,9 +26,6 @@ const EPGDisplay = ({ epg }: { epg: XtreamEPGResponse | null }) => {
              return str;
         }
     };
-
-    // Wait, standard Xtream response for short_epg is often NOT base64 encoded for title/desc.
-    // But `epg_listings` usually has `title`, `description`.
 
     return (
         <div className="text-left w-full mt-4 bg-black/20 p-4 rounded-lg backdrop-blur-sm">
@@ -70,6 +59,8 @@ export const ChannelInfo: React.FC<ChannelInfoProps> = ({ channel, epg, isLoadin
     );
   }
 
+  const tags = getStreamQualityTags(channel.name);
+
   return (
     <div className="flex-1 bg-background p-8 flex flex-col items-center justify-start pt-20">
       <div className="w-32 h-32 bg-surface mb-6 rounded-full overflow-hidden border-4 border-surface shadow-xl">
@@ -80,7 +71,14 @@ export const ChannelInfo: React.FC<ChannelInfoProps> = ({ channel, epg, isLoadin
          )}
       </div>
 
-      <h1 className="text-4xl font-bold text-center mb-4">{channel.name}</h1>
+      <h1 className="text-4xl font-bold text-center mb-2">{channel.name}</h1>
+
+      {/* Badges */}
+      <div className="flex space-x-2 mb-4">
+        {tags.is4K && <span className="px-2 py-0.5 rounded bg-yellow-500 text-black text-xs font-bold">4K UHD</span>}
+        {tags.isHEVC && <span className="px-2 py-0.5 rounded bg-blue-600 text-white text-xs font-bold">HEVC</span>}
+        {tags.isFHD && <span className="px-2 py-0.5 rounded bg-gray-600 text-white text-xs font-bold">FHD</span>}
+      </div>
 
       <div className="bg-surface p-6 rounded-lg w-full max-w-2xl text-center">
           <p className="text-gray-400 mb-2">Stream ID: {channel.stream_id}</p>
