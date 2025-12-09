@@ -1,0 +1,13 @@
+{
+  "id": "com.example.iptvplayer",
+  "version": "1.0.0",
+  "vendor": "My Company",
+  "type": "web",
+  "main": "index.html",
+  "title": "Modern IPTV",
+  "icon": "icon.png",
+  "requiredPermissions": [
+    "access.internet"
+  ],
+  "resolution": "1920x1080"
+}
