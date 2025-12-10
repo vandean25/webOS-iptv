@@ -103,7 +103,12 @@ interface ChannelListProps {
 }
 
 export const ChannelList: React.FC<ChannelListProps> = ({ channels, selectedChannelId, onSelectChannel, onPlayChannel, isLoading }) => {
+<<<<<<< HEAD
   const { ref, focusKey } = useFocusable({
+=======
+  // @ts-ignore - setFocus is missing in some type definitions but exists at runtime
+  const { ref, focusKey, setFocus } = useFocusable({
+>>>>>>> 232dec2 (Add mock 4K HEVC test channel and debug mode)
     focusKey: 'CHANNEL_LIST',
     trackChildren: true
   });
