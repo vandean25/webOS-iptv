@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Modern IPTV</string>
+    <string name="title_activity_main">Modern IPTV</string>
+    <string name="package_name">com.example.iptvplayer</string>
+    <string name="custom_url_scheme">com.example.iptvplayer</string>
+</resources>
