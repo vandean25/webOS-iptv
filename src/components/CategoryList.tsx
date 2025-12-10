@@ -42,10 +42,10 @@ export const CategoryList: React.FC<CategoryListProps> = ({ categories, selected
     trackChildren: true
   });
 
-  const { setSearchActive, isSearchActive } = useLiveStore();
+  const { enableSearch, isSearchActive } = useLiveStore();
 
   const handleSearchClick = () => {
-    setSearchActive(true);
+    enableSearch();
   };
 
   return (
