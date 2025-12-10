@@ -112,6 +112,11 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
     <div data-vjs-player className={`relative ${className}`}>
       <div ref={videoRef} className="w-full h-full" />
       <PlayerOverlay tags={tags} visible={overlayVisible} />
+
+      {/* Visual Debug Indicator */}
+      <div className="absolute top-2 left-2 bg-black/70 text-white p-2 rounded text-xs font-mono z-50 pointer-events-none">
+        DEBUG MODE: {useNative ? 'NATIVE (WebOS)' : 'VHS (Hls.js)'}
+      </div>
     </div>
   );
 };
