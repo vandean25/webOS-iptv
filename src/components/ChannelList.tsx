@@ -117,8 +117,8 @@ export const ChannelList: React.FC<ChannelListProps> = ({ channels, selectedChan
       return () => clearTimeout(timer);
   }, [searchInput, isSearchActive, setSearchQuery]);
 
-  const handleToggleFavorite = (id: number) => {
-      toggleFavorite(id);
+  const handleToggleFavorite = (channel: XtreamStream) => {
+      toggleFavorite(channel);
       updateFavorites(); // Refresh list if we are in Favorites category
   };
 
@@ -151,7 +151,7 @@ export const ChannelList: React.FC<ChannelListProps> = ({ channels, selectedChan
                         isSelected={channel.stream_id === selectedChannelId}
                         onSelect={() => onSelectChannel(channel.stream_id)}
                         onPlay={() => onPlayChannel(channel.stream_id)}
-                        onToggleFavorite={() => handleToggleFavorite(channel.stream_id)}
+                        onToggleFavorite={() => handleToggleFavorite(channel)}
                     />
                     ))}
                     {channels.length === 0 && (
