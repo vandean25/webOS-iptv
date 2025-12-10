@@ -22,7 +22,7 @@ const EPGDisplay = ({ epg }: { epg: XtreamEPGResponse | null }) => {
     const decode = (str: string) => {
         try {
              return atob(str);
-        } catch (e) {
+        } catch {
              return str;
         }
     };

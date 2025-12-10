@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import FavoritesService from './FavoritesService';
-import { XtreamStream } from '../types/xtream';
+import type { XtreamStream } from '../types/xtream';
 
 const mockChannel: XtreamStream = {
   stream_id: 123,

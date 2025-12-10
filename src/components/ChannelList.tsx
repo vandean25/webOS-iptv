@@ -59,7 +59,12 @@ const ChannelItem = ({
     >
         <div className="w-8 h-8 bg-black rounded flex-shrink-0 overflow-hidden relative">
             {channel.stream_icon ? (
-                <img src={channel.stream_icon} alt="" className="w-full h-full object-cover" onError={(e) => (e.target as any).style.display = 'none'} />
+                <img
+                    src={channel.stream_icon}
+                    alt=""
+                    className="w-full h-full object-cover"
+                    onError={(e) => (e.target as HTMLImageElement).style.display = 'none'}
+                />
             ) : (
                 <div className="text-xs flex items-center justify-center h-full text-gray-500">TV</div>
             )}
