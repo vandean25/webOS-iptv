@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import type { XtreamCategory, XtreamStream, XtreamEPGResponse } from '../types/xtream';
 import LiveService from '../services/LiveService';
+import FavoritesService from '../services/FavoritesService';
 
 export const FAVORITES_CATEGORY_ID = 'favorites';
 
@@ -64,9 +65,8 @@ export const useLiveStore = create<LiveState>((set, get) => ({
     set({ selectedCategoryId: categoryId, isLoadingChannels: true, error: null, channels: [], isSearchActive: false });
     try {
         if (categoryId === FAVORITES_CATEGORY_ID) {
-            // Logic for favorites would normally go here, fetching from local storage or service
-            // For now, we will just set empty channels or handle it in the component if it uses useFavorites hook separately
-             set({ channels: [], isLoadingChannels: false });
+             const channels = FavoritesService.getFavorites();
+             set({ channels, isLoadingChannels: false });
         } else {
              const channels = await LiveService.getLiveStreams(categoryId);
              set({ channels, isLoadingChannels: false });
@@ -138,10 +138,8 @@ export const useLiveStore = create<LiveState>((set, get) => ({
       // If currently viewing favorites, reload them
       const state = get();
       if (state.selectedCategoryId === FAVORITES_CATEGORY_ID) {
-          // Trigger re-fetch or re-render
-          // Since favorites logic seems to be split between this store and useFavorites hook,
-          // we might need to rely on the component re-rendering or manually syncing.
-          // For now, this placeholder satisfies the interface.
+          const channels = FavoritesService.getFavorites();
+          set({ channels });
       }
   }
 }));

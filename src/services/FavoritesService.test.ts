@@ -1,16 +1,31 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import FavoritesService from './FavoritesService';
+import { XtreamStream } from '../types/xtream';
+
+const mockChannel: XtreamStream = {
+  stream_id: 123,
+  name: 'Test Channel',
+  stream_type: 'live',
+  stream_icon: 'icon.png',
+  epg_channel_id: '123',
+  added: '2023-01-01',
+  category_id: '1',
+  custom_sid: '',
+  tv_archive: 0,
+  direct_source: '',
+  tv_archive_duration: 0,
+  num: 1
+};
+
+const mockChannel2: XtreamStream = {
+  ...mockChannel,
+  stream_id: 456,
+  name: 'Test Channel 2'
+};
 
 describe('FavoritesService', () => {
   beforeEach(() => {
-    // Clear localStorage mock before each test
     localStorage.clear();
-    // Reset the singleton instance state if possible, or just rely on localStorage
-    // Since service reads from localStorage on every get, clearing LS is enough?
-    // The service has no internal state cache for the list, it reads from LS.
-    // Wait, the service implementation:
-    // private getFavorites() { ... return stored ? JSON.parse(stored) : []; }
-    // It doesn't cache in a variable. Good.
   });
 
   it('should start with empty favorites', () => {
@@ -18,50 +33,53 @@ describe('FavoritesService', () => {
   });
 
   it('should add a favorite', () => {
-    FavoritesService.addFavorite(123);
-    expect(FavoritesService.getFavorites()).toEqual([123]);
+    FavoritesService.addFavorite(mockChannel);
+    const favorites = FavoritesService.getFavorites();
+    expect(favorites).toHaveLength(1);
+    expect(favorites[0].stream_id).toBe(123);
     expect(FavoritesService.isFavorite(123)).toBe(true);
   });
 
   it('should not add duplicate favorites', () => {
-    FavoritesService.addFavorite(123);
-    FavoritesService.addFavorite(123);
-    expect(FavoritesService.getFavorites()).toEqual([123]);
+    FavoritesService.addFavorite(mockChannel);
+    FavoritesService.addFavorite(mockChannel);
+    expect(FavoritesService.getFavorites()).toHaveLength(1);
   });
 
   it('should remove a favorite', () => {
-    FavoritesService.addFavorite(123);
+    FavoritesService.addFavorite(mockChannel);
     FavoritesService.removeFavorite(123);
     expect(FavoritesService.getFavorites()).toEqual([]);
     expect(FavoritesService.isFavorite(123)).toBe(false);
   });
 
   it('should toggle a favorite', () => {
-    FavoritesService.toggleFavorite(123);
+    FavoritesService.toggleFavorite(mockChannel);
     expect(FavoritesService.isFavorite(123)).toBe(true);
 
-    FavoritesService.toggleFavorite(123);
+    FavoritesService.toggleFavorite(mockChannel);
     expect(FavoritesService.isFavorite(123)).toBe(false);
   });
 
   it('should persist to localStorage', () => {
-    FavoritesService.addFavorite(456);
+    FavoritesService.addFavorite(mockChannel2);
     const stored = localStorage.getItem('iptv_favorites');
-    expect(stored).toBe(JSON.stringify([456]));
+    expect(JSON.parse(stored!)).toHaveLength(1);
+    expect(JSON.parse(stored!)[0].stream_id).toBe(456);
   });
 
   it('should notify subscribers', () => {
     const listener = vi.fn();
     const unsubscribe = FavoritesService.subscribe(listener);
 
-    FavoritesService.addFavorite(789);
+    FavoritesService.addFavorite(mockChannel);
     expect(listener).toHaveBeenCalledTimes(1);
 
-    FavoritesService.removeFavorite(789);
+    FavoritesService.removeFavorite(123);
     expect(listener).toHaveBeenCalledTimes(2);
 
     unsubscribe();
-    FavoritesService.addFavorite(999);
+    FavoritesService.addFavorite(mockChannel2);
     expect(listener).toHaveBeenCalledTimes(2); // Should not be called again
   });
 });
