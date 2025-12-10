@@ -1,3 +1,5 @@
+import type { XtreamStream } from '../types/xtream';
+
 const STORAGE_KEY = 'iptv_favorites';
 
 class FavoritesService {
@@ -13,45 +15,62 @@ class FavoritesService {
     return FavoritesService.instance;
   }
 
-  public getFavorites(): number[] {
+  public getFavorites(): XtreamStream[] {
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
-      return stored ? JSON.parse(stored) : [];
+      if (!stored) return [];
+
+      const parsed = JSON.parse(stored);
+      if (!Array.isArray(parsed)) return [];
+
+      // Filter out legacy ID-only favorites (numbers) and ensure valid objects
+      const validFavorites = parsed.filter(item =>
+        typeof item === 'object' &&
+        item !== null &&
+        'stream_id' in item
+      );
+
+      // If we filtered out bad data, save the cleaned list back
+      if (validFavorites.length !== parsed.length) {
+        this.saveFavorites(validFavorites);
+      }
+
+      return validFavorites;
     } catch (e) {
       console.error('Failed to parse favorites', e);
       return [];
     }
   }
 
-  private saveFavorites(favorites: number[]) {
+  private saveFavorites(favorites: XtreamStream[]) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(favorites));
     this.notifyListeners();
   }
 
-  public addFavorite(id: number) {
+  public addFavorite(channel: XtreamStream) {
     const favorites = this.getFavorites();
-    if (!favorites.includes(id)) {
-      favorites.push(id);
+    if (!favorites.some(f => f.stream_id === channel.stream_id)) {
+      favorites.push(channel);
       this.saveFavorites(favorites);
     }
   }
 
   public removeFavorite(id: number) {
     let favorites = this.getFavorites();
-    favorites = favorites.filter(favId => favId !== id);
+    favorites = favorites.filter(f => f.stream_id !== id);
     this.saveFavorites(favorites);
   }
 
   public isFavorite(id: number): boolean {
     const favorites = this.getFavorites();
-    return favorites.includes(id);
+    return favorites.some(f => f.stream_id === id);
   }
 
-  public toggleFavorite(id: number) {
-    if (this.isFavorite(id)) {
-      this.removeFavorite(id);
+  public toggleFavorite(channel: XtreamStream) {
+    if (this.isFavorite(channel.stream_id)) {
+      this.removeFavorite(channel.stream_id);
     } else {
-      this.addFavorite(id);
+      this.addFavorite(channel);
     }
   }
 

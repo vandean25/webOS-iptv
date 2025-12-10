@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import type { XtreamCategory, XtreamStream, XtreamEPGResponse } from '../types/xtream';
 import LiveService from '../services/LiveService';
+import FavoritesService from '../services/FavoritesService';
 
 export const FAVORITES_CATEGORY_ID = 'favorites';
 
@@ -68,7 +69,8 @@ export const useLiveStore = create<LiveState>((set, get) => ({
     set({ selectedCategoryId: categoryId, isLoadingChannels: true, error: null, channels: [], isSearchActive: false });
     try {
         if (categoryId === FAVORITES_CATEGORY_ID) {
-             set({ channels: [], isLoadingChannels: false });
+             const channels = FavoritesService.getFavorites();
+             set({ channels, isLoadingChannels: false });
         } else {
              const channels = await LiveService.getLiveStreams(categoryId);
              set({ channels, isLoadingChannels: false });
@@ -174,6 +176,11 @@ export const useLiveStore = create<LiveState>((set, get) => ({
   },
 
   updateFavorites: () => {
-      // Placeholder
+      // If currently viewing favorites, reload them
+      const state = get();
+      if (state.selectedCategoryId === FAVORITES_CATEGORY_ID) {
+          const channels = FavoritesService.getFavorites();
+          set({ channels });
+      }
   }
 }));
