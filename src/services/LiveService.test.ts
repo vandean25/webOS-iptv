@@ -52,7 +52,14 @@ describe('LiveService', () => {
 
     const result = await LiveService.getLiveStreams('1');
 
-    expect(result).toEqual(mockStreams);
+    // Expect the original stream PLUS the injected mock channel
+    expect(result).toHaveLength(2);
+    expect(result[0]).toEqual(mockStreams[0]);
+    expect(result[1]).toEqual(expect.objectContaining({
+      stream_id: 99999,
+      name: "[4K] [HEVC] Test Channel"
+    }));
+
     expect(axios.get).toHaveBeenCalledWith(
       'http://example.com/player_api.php',
       expect.objectContaining({
