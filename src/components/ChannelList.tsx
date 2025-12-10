@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useFocusable, FocusContext } from '@noriginmedia/norigin-spatial-navigation';
+import { useFocusable, FocusContext, setFocus as setSpatialFocus } from '@noriginmedia/norigin-spatial-navigation';
 import classNames from 'classnames';
 import type { XtreamStream } from '../types/xtream';
 import { Skeleton } from './Skeleton';
@@ -103,8 +103,7 @@ interface ChannelListProps {
 }
 
 export const ChannelList: React.FC<ChannelListProps> = ({ channels, selectedChannelId, onSelectChannel, onPlayChannel, isLoading }) => {
-  // @ts-expect-error - setFocus is missing in some type definitions but exists at runtime
-  const { ref, focusKey, setFocus } = useFocusable({
+  const { ref, focusKey } = useFocusable({
     focusKey: 'CHANNEL_LIST',
     trackChildren: true
   });
@@ -118,11 +117,11 @@ export const ChannelList: React.FC<ChannelListProps> = ({ channels, selectedChan
     if (isSearchActive) {
       // Small delay to ensure component is mounted and registered with spatial nav
       const t = setTimeout(() => {
-          setFocus('SEARCH_INPUT');
+          setSpatialFocus('SEARCH_INPUT');
       }, 50);
       return () => clearTimeout(t);
     }
-  }, [isSearchActive, setFocus]);
+  }, [isSearchActive]);
 
   // Debounce search
   useEffect(() => {
