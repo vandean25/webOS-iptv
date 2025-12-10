@@ -14,9 +14,9 @@ vi.mock('../services/LiveService', () => ({
 
 describe('useLiveStore Search Logic', () => {
   const mockStreams: XtreamStream[] = [
-    { stream_id: 1, name: 'CNN US', stream_type: 'live', stream_icon: '', epg_channel_id: '1', added: '', category_id: '1', custom_sid: '', tv_archive: 0, direct_source: '', tv_archive_duration: 0 },
-    { stream_id: 2, name: 'BBC World', stream_type: 'live', stream_icon: '', epg_channel_id: '2', added: '', category_id: '1', custom_sid: '', tv_archive: 0, direct_source: '', tv_archive_duration: 0 },
-    { stream_id: 3, name: 'Sky Sports', stream_type: 'live', stream_icon: '', epg_channel_id: '3', added: '', category_id: '2', custom_sid: '', tv_archive: 0, direct_source: '', tv_archive_duration: 0 },
+    { num: 1, stream_id: 1, name: 'CNN US', stream_type: 'live', stream_icon: '', epg_channel_id: '1', added: '', category_id: '1', custom_sid: '', tv_archive: 0, direct_source: '', tv_archive_duration: 0 },
+    { num: 2, stream_id: 2, name: 'BBC World', stream_type: 'live', stream_icon: '', epg_channel_id: '2', added: '', category_id: '1', custom_sid: '', tv_archive: 0, direct_source: '', tv_archive_duration: 0 },
+    { num: 3, stream_id: 3, name: 'Sky Sports', stream_type: 'live', stream_icon: '', epg_channel_id: '3', added: '', category_id: '2', custom_sid: '', tv_archive: 0, direct_source: '', tv_archive_duration: 0 },
   ];
 
   beforeEach(() => {
