@@ -98,24 +98,35 @@ interface ChannelListProps {
 }
 
 export const ChannelList: React.FC<ChannelListProps> = ({ channels, selectedChannelId, onSelectChannel, onPlayChannel, isLoading }) => {
-  const { ref, focusKey } = useFocusable({
+  const { ref, focusKey, setFocus } = useFocusable({
     focusKey: 'CHANNEL_LIST',
     trackChildren: true
   });
 
-  const { isSearchActive, setSearchQuery, updateFavorites } = useLiveStore();
+  const { isSearchActive, performSearch, updateFavorites } = useLiveStore();
   const { toggleFavorite } = useFavorites();
   const [searchInput, setSearchInput] = useState('');
+
+  // Auto-focus on search input when search becomes active
+  useEffect(() => {
+    if (isSearchActive) {
+      // Small delay to ensure component is mounted and registered with spatial nav
+      const t = setTimeout(() => {
+          setFocus('SEARCH_INPUT');
+      }, 50);
+      return () => clearTimeout(t);
+    }
+  }, [isSearchActive, setFocus]);
 
   // Debounce search
   useEffect(() => {
       const timer = setTimeout(() => {
           if (isSearchActive) {
-              setSearchQuery(searchInput);
+              performSearch(searchInput);
           }
       }, 500); // 500ms debounce
       return () => clearTimeout(timer);
-  }, [searchInput, isSearchActive, setSearchQuery]);
+  }, [searchInput, isSearchActive, performSearch]);
 
   const handleToggleFavorite = (channel: XtreamStream) => {
       toggleFavorite(channel);
@@ -129,6 +140,7 @@ export const ChannelList: React.FC<ChannelListProps> = ({ channels, selectedChan
          {isSearchActive && (
              <div className="p-2 border-b border-gray-700">
                  <FocusableInput
+                    focusKey="SEARCH_INPUT"
                     placeholder="Search channels..."
                     value={searchInput}
                     onChange={(e) => setSearchInput(e.target.value)}
@@ -156,7 +168,7 @@ export const ChannelList: React.FC<ChannelListProps> = ({ channels, selectedChan
                     ))}
                     {channels.length === 0 && (
                         <div className="p-4 text-center text-gray-500">
-                            {isSearchActive ? 'Type to search...' : 'No channels found'}
+                            {isSearchActive && !searchInput ? 'Type to search...' : (isSearchActive ? 'No results' : 'No channels found')}
                         </div>
                     )}
                 </>

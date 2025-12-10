@@ -8,6 +8,7 @@ export const FAVORITES_CATEGORY_ID = 'favorites';
 interface LiveState {
   categories: XtreamCategory[];
   channels: XtreamStream[];
+  allChannels: XtreamStream[]; // Cache for all channels
   selectedCategoryId: string | null;
   selectedChannelId: number | null;
   epg: XtreamEPGResponse | null;
@@ -27,14 +28,17 @@ interface LiveState {
   nextChannel: () => void;
   prevChannel: () => void;
   reset: () => void;
+  enableSearch: () => Promise<void>; // New action to start search
   setSearchActive: (active: boolean) => void;
-  setSearchQuery: (query: string) => void;
+  setSearchQuery: (query: string) => void; // Kept for compatibility but might delegate to performSearch
+  performSearch: (query: string) => void; // New action for filtering
   updateFavorites: () => void;
 }
 
 export const useLiveStore = create<LiveState>((set, get) => ({
   categories: [],
   channels: [],
+  allChannels: [],
   selectedCategoryId: null,
   selectedChannelId: null,
   epg: null,
@@ -96,7 +100,6 @@ export const useLiveStore = create<LiveState>((set, get) => ({
     if (currentIndex === -1) return;
 
     const nextIndex = (currentIndex + 1) % channels.length;
-    // Use selectChannel to reuse EPG fetching logic
     selectChannel(channels[nextIndex].stream_id);
   },
 
@@ -108,7 +111,6 @@ export const useLiveStore = create<LiveState>((set, get) => ({
     if (currentIndex === -1) return;
 
     const prevIndex = (currentIndex - 1 + channels.length) % channels.length;
-    // Use selectChannel to reuse EPG fetching logic
     selectChannel(channels[prevIndex].stream_id);
   },
 
@@ -116,6 +118,7 @@ export const useLiveStore = create<LiveState>((set, get) => ({
     set({
       categories: [],
       channels: [],
+      allChannels: [],
       selectedCategoryId: null,
       selectedChannelId: null,
       epg: null,
@@ -125,13 +128,51 @@ export const useLiveStore = create<LiveState>((set, get) => ({
     });
   },
 
+  enableSearch: async () => {
+      const { allChannels } = get();
+      set({ isSearchActive: true, selectedCategoryId: null, channels: [], searchQuery: '' });
+
+      if (allChannels.length === 0) {
+          set({ isLoadingChannels: true, error: null });
+          try {
+              // Fetch all streams (no categoryId provided)
+              const streams = await LiveService.getLiveStreams();
+              set({ allChannels: streams, isLoadingChannels: false });
+          } catch (error: any) {
+              set({ error: error.message, isLoadingChannels: false });
+          }
+      }
+  },
+
   setSearchActive: (active: boolean) => {
-      set({ isSearchActive: active, selectedCategoryId: null });
+      set({ isSearchActive: active });
+      if (!active && get().categories.length > 0) {
+          // If closing search, maybe re-select the first category or last selected?
+          // For now, let's just clear search state.
+          // The UI might need to call selectCategory explicitly to go back.
+      }
   },
 
   setSearchQuery: (query: string) => {
       set({ searchQuery: query });
-      // Here one might trigger a search action
+  },
+
+  performSearch: (query: string) => {
+      set({ searchQuery: query });
+      const { allChannels } = get();
+
+      if (!query.trim()) {
+          set({ channels: [] }); // Or show empty if no query
+          return;
+      }
+
+      const lowerQuery = query.toLowerCase();
+      // Filter and limit to 100 results for performance
+      const filtered = allChannels
+          .filter(c => c.name.toLowerCase().includes(lowerQuery))
+          .slice(0, 100);
+
+      set({ channels: filtered });
   },
 
   updateFavorites: () => {
