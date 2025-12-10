@@ -15,7 +15,7 @@ interface VideoPlayerProps {
   overlayVisible?: boolean;
 }
 
-export const VideoPlayer: React.FC<VideoPlayerProps> = ({
+export const VideoPlayer: React.FC<VideoPlayerProps> = React.memo(({
   src,
   className,
   onEnded,
@@ -119,4 +119,6 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
       </div>
     </div>
   );
-};
+});
+
+VideoPlayer.displayName = 'VideoPlayer';

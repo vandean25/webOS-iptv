@@ -7,12 +7,10 @@ interface PlayerOverlayProps {
 }
 
 export const PlayerOverlay: React.FC<PlayerOverlayProps> = ({ tags, visible }) => {
-  if (!visible || (!tags.is4K && !tags.isHEVC && !tags.isFHD)) {
-    return null;
-  }
+  const hasBadges = tags.is4K || tags.isHEVC || tags.isFHD;
 
   return (
-    <div className="absolute top-4 right-4 flex space-x-2 z-50 pointer-events-none">
+    <div className={`absolute top-4 right-4 flex space-x-2 z-50 pointer-events-none transition-opacity duration-300 ${visible && hasBadges ? 'opacity-100' : 'opacity-0'}`}>
       {tags.is4K && (
         <div className="bg-yellow-500/90 text-black font-bold px-2 py-1 rounded text-xs shadow-lg backdrop-blur-sm border border-yellow-400">
           4K UHD
