@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { useLiveStore } from '../store/liveStore';
 import LiveService from '../services/LiveService';
 import { CategoryList } from '../components/CategoryList';
@@ -32,18 +32,32 @@ const LiveTVPage: React.FC = () => {
 
   const { focusSelf } = useFocusable();
 
+  const showOverlay = useCallback(() => {
+      setOverlayVisible(true);
+      if (overlayTimer.current) clearTimeout(overlayTimer.current);
+      overlayTimer.current = setTimeout(() => setOverlayVisible(false), 5000);
+  }, []);
+
   // Handle Remote Control when Player is Active
-  useTVRemote({
+  const remoteKeyMap = useMemo(() => ({
     'ArrowUp': () => { nextChannel(); showOverlay(); },
     'ArrowDown': () => { prevChannel(); showOverlay(); },
     'Back': () => { setPlayerActive(false); focusSelf(); }, // Exit player and focus layout
     'Enter': () => showOverlay(),
-  }, isPlayerActive);
+  }), [nextChannel, prevChannel, showOverlay, setPlayerActive, focusSelf]);
 
-  const showOverlay = () => {
-      setOverlayVisible(true);
-      if (overlayTimer.current) clearTimeout(overlayTimer.current);
-      overlayTimer.current = setTimeout(() => setOverlayVisible(false), 5000);
+  useTVRemote(remoteKeyMap, isPlayerActive);
+
+  const toggleFullscreen = () => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen().catch((err) => {
+        console.error(`Error attempting to enable fullscreen: ${err.message}`);
+      });
+    } else {
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+      }
+    }
   };
 
   const toggleFullscreen = () => {
