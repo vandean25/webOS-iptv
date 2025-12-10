@@ -67,10 +67,10 @@ class LiveService {
         stream_type: "live",
         stream_id: 99999,
         stream_icon: "https://upload.wikimedia.org/wikipedia/commons/c/c5/Big_buck_bunny_poster_big.jpg",
-        epg_channel_id: null,
+        epg_channel_id: "",
         added: "2024-01-01 12:00:00",
         category_id: categoryId || "1",
-        custom_sid: null,
+        custom_sid: "",
         tv_archive: 0,
         direct_source: "",
         tv_archive_duration: 0

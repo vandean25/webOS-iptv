@@ -31,9 +31,7 @@ describe('VideoPlayer HEVC/4K Logic', () => {
     vi.spyOn(streamUtils, 'getStreamQualityTags').mockReturnValue({
       is4K: true,
       isHEVC: true,
-      isFHD: false,
-      isHD: false,
-      isSD: false
+      isFHD: false
     });
 
     // 3. Render the player with a mock channel name
@@ -56,9 +54,7 @@ describe('VideoPlayer HEVC/4K Logic', () => {
     vi.spyOn(streamUtils, 'getStreamQualityTags').mockReturnValue({
       is4K: false,
       isHEVC: false,
-      isFHD: true,
-      isHD: false,
-      isSD: false
+      isFHD: true
     });
 
     // 3. Render
@@ -81,9 +77,7 @@ describe('VideoPlayer HEVC/4K Logic', () => {
     vi.spyOn(streamUtils, 'getStreamQualityTags').mockReturnValue({
       is4K: true,
       isHEVC: true,
-      isFHD: false,
-      isHD: false,
-      isSD: false
+      isFHD: false
     });
 
     // 3. Render
