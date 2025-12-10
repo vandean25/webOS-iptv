@@ -22,6 +22,39 @@ class LoginService {
   public async login(credentials: XtreamCredentials): Promise<XtreamLoginResponse> {
     const { url, username, password } = credentials;
 
+    // MOCK LOGIN BYPASS
+    if (username === 'demo' && password === 'demo') {
+      const mockResponse: XtreamLoginResponse = {
+        user_info: {
+          username: "demo_user",
+          password: "demo_password",
+          message: "Login Success via Mock",
+          auth: 1,
+          status: "Active",
+          exp_date: "1999999999",
+          is_trial: "0",
+          active_cons: "0",
+          created_at: "1672531200",
+          max_connections: "5",
+          allowed_output_formats: ["m3u8", "ts"]
+        },
+        server_info: {
+          url: "http://mock-server",
+          port: "8080",
+          https_port: "443",
+          server_protocol: "http",
+          rtmp_port: "8880",
+          timezone: "Europe/Berlin",
+          timestamp_now: 1704067200,
+          time_now: "2024-01-01 12:00:00",
+          process: true
+        }
+      };
+
+      this.saveCredentials(credentials);
+      return Promise.resolve(mockResponse);
+    }
+
     // Ensure URL ends with / or remove it to construct properly?
     // Usually Xtream API is at base_url/player_api.php
     // Let's normalize the URL.
