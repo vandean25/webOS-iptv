@@ -46,18 +46,6 @@ const LiveTVPage: React.FC = () => {
       overlayTimer.current = setTimeout(() => setOverlayVisible(false), 5000);
   };
 
-  const toggleFullscreen = () => {
-    if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen().catch((err) => {
-        console.error(`Error attempting to enable fullscreen: ${err.message}`);
-      });
-    } else {
-      if (document.exitFullscreen) {
-        document.exitFullscreen();
-      }
-    }
-  };
-
   useEffect(() => {
     fetchCategories();
     focusSelf();
@@ -68,23 +56,6 @@ const LiveTVPage: React.FC = () => {
     if (isPlayerActive) {
         showOverlay();
     }
-
-    // Add activity listeners
-    const handleActivity = () => {
-        if (isPlayerActive) {
-            showOverlay();
-        }
-    };
-
-    if (isPlayerActive) {
-        window.addEventListener('mousemove', handleActivity);
-        window.addEventListener('keydown', handleActivity);
-    }
-
-    return () => {
-        window.removeEventListener('mousemove', handleActivity);
-        window.removeEventListener('keydown', handleActivity);
-    };
   }, [selectedChannelId, isPlayerActive]);
 
   // Find the full channel object
@@ -110,17 +81,6 @@ const LiveTVPage: React.FC = () => {
                       <span className="text-gray-300">Live TV</span>
                   </div>
               </div>
-
-              {/* Fullscreen Button */}
-              <button
-                  onClick={toggleFullscreen}
-                  className={`absolute bottom-8 right-8 p-3 bg-white/10 hover:bg-white/20 rounded-full text-white backdrop-blur-sm transition-all duration-500 z-50 ${overlayVisible ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
-                  aria-label="Toggle Fullscreen"
-              >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 4l-5-5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
-                  </svg>
-              </button>
           </div>
       );
   }

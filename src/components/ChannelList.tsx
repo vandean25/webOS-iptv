@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useFocusable, FocusContext, setFocus as setSpatialFocus } from '@noriginmedia/norigin-spatial-navigation';
+import { useFocusable, FocusContext } from '@noriginmedia/norigin-spatial-navigation';
 import classNames from 'classnames';
 import type { XtreamStream } from '../types/xtream';
 import { Skeleton } from './Skeleton';
@@ -103,12 +103,8 @@ interface ChannelListProps {
 }
 
 export const ChannelList: React.FC<ChannelListProps> = ({ channels, selectedChannelId, onSelectChannel, onPlayChannel, isLoading }) => {
-<<<<<<< HEAD
-  const { ref, focusKey } = useFocusable({
-=======
-  // @ts-ignore - setFocus is missing in some type definitions but exists at runtime
+  // @ts-expect-error - setFocus is missing in some type definitions but exists at runtime
   const { ref, focusKey, setFocus } = useFocusable({
->>>>>>> 232dec2 (Add mock 4K HEVC test channel and debug mode)
     focusKey: 'CHANNEL_LIST',
     trackChildren: true
   });
@@ -122,11 +118,11 @@ export const ChannelList: React.FC<ChannelListProps> = ({ channels, selectedChan
     if (isSearchActive) {
       // Small delay to ensure component is mounted and registered with spatial nav
       const t = setTimeout(() => {
-          setSpatialFocus('SEARCH_INPUT');
+          setFocus('SEARCH_INPUT');
       }, 50);
       return () => clearTimeout(t);
     }
-  }, [isSearchActive]);
+  }, [isSearchActive, setFocus]);
 
   // Debounce search
   useEffect(() => {

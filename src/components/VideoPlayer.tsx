@@ -26,14 +26,6 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
 }) => {
   const videoRef = useRef<HTMLDivElement>(null);
   const playerRef = useRef<Player | null>(null);
-  const onEndedRef = useRef(onEnded);
-  const onErrorRef = useRef(onError);
-
-  // Update refs when props change
-  useEffect(() => {
-    onEndedRef.current = onEnded;
-    onErrorRef.current = onError;
-  }, [onEnded, onError]);
 
   // Calculate quality tags and capability
   const tags = useMemo(() => getStreamQualityTags(channelName), [channelName]);
@@ -92,8 +84,8 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
       ...options
     }, () => {
       if (player) {
-        player.on('ended', () => onEndedRef.current && onEndedRef.current());
-        player.on('error', (e: any) => onErrorRef.current && onErrorRef.current(e));
+        player.on('ended', () => onEnded && onEnded());
+        player.on('error', (e: any) => onError && onError(e));
       }
     });
 
@@ -106,7 +98,7 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
         playerRef.current = null;
       }
     };
-  }, [src, options, useNative, isHighQuality]);
+  }, [src, options, onEnded, onError, useNative, isHighQuality]);
 
   return (
     <div data-vjs-player className={`relative ${className}`}>
