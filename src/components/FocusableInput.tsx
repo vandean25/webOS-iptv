@@ -20,11 +20,11 @@ export const FocusableInput: React.FC<FocusableInputProps> = ({
     focusKey,
     onEnterPress,
     onFocus: (layout, props) => {
-        onFocus && onFocus(layout as any);
+        if (onFocus) onFocus(layout as any);
         console.debug('Focused input via Spatial Nav:', props);
     },
     onBlur: (layout, props) => {
-        onBlur && onBlur(layout as any);
+        if (onBlur) onBlur(layout as any);
         console.debug('Blurred input via Spatial Nav:', props);
     },
     isFocusBoundary: false

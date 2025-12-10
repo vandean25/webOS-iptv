@@ -55,7 +55,7 @@ describe('AuthStore', () => {
 
     try {
         await useAuthStore.getState().login(mockCredentials);
-    } catch (e) {
+    } catch {
         // expected
     }
 

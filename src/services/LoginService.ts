@@ -67,7 +67,7 @@ class LoginService {
     if (!stored) return null;
     try {
       return JSON.parse(stored) as XtreamCredentials;
-    } catch (e) {
+    } catch {
       return null;
     }
   }
