@@ -17,11 +17,7 @@ export const FocusableButton: React.FC<FocusableButtonProps> = ({
 }) => {
   const { ref, focused } = useFocusable({
     focusKey,
-    onEnterPress: () => {
-        if (onClick) {
-            (onClick as any)();
-        }
-    }
+    onEnterPress: onClick
   });
 
   return (

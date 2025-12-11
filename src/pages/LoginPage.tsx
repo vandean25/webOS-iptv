@@ -13,7 +13,7 @@ const LoginPage: React.FC = () => {
 
   const { login, isLoading, error } = useAuthStore();
   const navigate = useNavigate();
-  const { focusSelf } = useFocusable();
+  const { ref, focusSelf } = useFocusable();
 
   // Auto-fill from local storage if available to save typing
   useEffect(() => {
@@ -31,14 +31,14 @@ const LoginPage: React.FC = () => {
 
     try {
       await login({ url, username, password });
-      navigate('/dashboard');
+      navigate('/live');
     } catch {
       // Error is handled in store and displayed via state
     }
   };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col items-center justify-center p-safe-area">
+    <div ref={ref} className="min-h-screen bg-background flex flex-col items-center justify-center p-safe-area">
       <div className="w-full max-w-md bg-surface p-8 rounded-xl shadow-2xl">
         <h1 className="text-3xl font-bold text-center mb-8 text-primary">Modern IPTV</h1>
 
