@@ -19,9 +19,7 @@ const CategoriesPage: React.FC = () => {
   }, [categories, fetchCategories]);
 
   const onCategoryPress = (categoryId: string) => {
-    // This will be implemented in a later step
-    console.log('Navigate to category:', categoryId);
-     navigate(`/live?categoryId=${categoryId}`);
+    navigate(`/category/${categoryId}`);
   };
 
   return (

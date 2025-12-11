@@ -29,6 +29,7 @@ const ChannelCard: React.FC<ChannelCardProps> = ({ channel, onEnterPress }) => {
   return (
     <div
       ref={ref}
+      onClick={onEnterPress}
       className={`tv-card group relative flex flex-col gap-3 p-1 rounded-xl cursor-pointer focus:outline-none transition-transform duration-300 ${focused ? 'scale-105 z-10' : ''}`}
       tabIndex={-1}
     >

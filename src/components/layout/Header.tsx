@@ -1,6 +1,5 @@
 import React from 'react';
 import Icon from './Icon';
-import { useAuthStore } from '../../store/authStore';
 
 interface HeaderProps {
   title: string;
@@ -8,7 +7,6 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = ({ title, subtitle }) => {
-  const { userInfo } = useAuthStore();
   const currentTime = new Date().toLocaleTimeString('en-US', {
     hour: '2-digit',
     minute: '2-digit',

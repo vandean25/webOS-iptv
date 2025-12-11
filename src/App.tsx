@@ -6,6 +6,7 @@ import LiveTVPage from './pages/LiveTVPage';
 import FavoritesPage from './pages/FavoritesPage';
 import CategoriesPage from './pages/CategoriesPage';
 import SearchPage from './pages/SearchPage';
+import ChannelGridPage from './pages/ChannelGridPage';
 import { useAuthStore } from './store/authStore';
 import { useThemeStore } from './store/themeStore';
 
@@ -63,7 +64,15 @@ const App: React.FC = () => {
             }
           />
           <Route
-            path="/live"
+            path="/category/:categoryId"
+            element={
+              <ProtectedRoute>
+                <ChannelGridPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/live/:channelId"
             element={
               <ProtectedRoute>
                 <LiveTVPage />

@@ -17,9 +17,9 @@
 }
 
 .light {
-    --primary: #135bec;
+    --primary: #1e90ff;
     --background-light: #ffffff;
-    --background-dark: #f6f6f8;
+    --background-dark: #f0f8ff;
     --surface-dark: #ffffff;
 }
 

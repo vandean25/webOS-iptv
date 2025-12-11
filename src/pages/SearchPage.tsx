@@ -6,13 +6,12 @@ import { useLiveStore } from '../store/liveStore';
 import { useNavigate } from 'react-router-dom';
 import { useFocusable, setFocus } from '@noriginmedia/norigin-spatial-navigation';
 import { FocusableInput } from '../components/FocusableInput';
-import type { XtreamStream } from '../types';
 
 const SearchPage: React.FC = () => {
   const [query, setQuery] = useState('');
   const { allChannels, fetchAllChannels } = useLiveStore();
   const navigate = useNavigate();
-  const { ref, focusKey } = useFocusable();
+  const { ref } = useFocusable();
 
   // Fetch all channels once when the component mounts
   useEffect(() => {
@@ -22,7 +21,7 @@ const SearchPage: React.FC = () => {
   }, [allChannels, fetchAllChannels]);
 
   const onChannelPress = (channelId: string) => {
-    navigate(`/live?channelId=${channelId}`);
+    navigate(`/live/${channelId}`);
   };
 
   const filteredChannels = useMemo(() => {
