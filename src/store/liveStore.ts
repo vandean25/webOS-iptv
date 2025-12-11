@@ -33,6 +33,7 @@ interface LiveState {
   setSearchQuery: (query: string) => void; // Kept for compatibility but might delegate to performSearch
   performSearch: (query: string) => void; // New action for filtering
   updateFavorites: () => void;
+  fetchAllChannels: () => Promise<void>;
 }
 
 export const useLiveStore = create<LiveState>((set, get) => ({
@@ -182,5 +183,18 @@ export const useLiveStore = create<LiveState>((set, get) => ({
           const channels = FavoritesService.getFavorites();
           set({ channels });
       }
+  },
+
+  fetchAllChannels: async () => {
+    const { allChannels } = get();
+    if (allChannels.length > 0) return;
+
+    set({ isLoadingChannels: true, error: null });
+    try {
+      const streams = await LiveService.getLiveStreams();
+      set({ allChannels: streams, isLoadingChannels: false });
+    } catch (error: any) {
+      set({ error: error.message, isLoadingChannels: false });
+    }
   }
 }));

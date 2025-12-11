@@ -42,7 +42,7 @@ export const FocusableInput: React.FC<FocusableInputProps> = ({
     <input
       ref={ref}
       className={classNames(
-        'w-full p-4 rounded bg-surface text-text border-2 transition-all duration-200 outline-none',
+        'w-full p-4 rounded bg-surface text-text border-2 transition-all duration-200 outline-none dark:bg-surface-dark dark:text-white dark:placeholder-text-muted',
         {
           'border-primary scale-105 shadow-lg': focused,
           'border-transparent': !focused,

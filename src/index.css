@@ -3,9 +3,24 @@
 @tailwind utilities;
 
 :root {
-  background-color: #0f0f0f;
-  color: #e5e5e5;
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  --primary: #135bec;
+  --background-light: #f6f6f8;
+  --background-dark: #101622;
+  --surface-dark: #1a2130;
+}
+
+.dark {
+  --primary: #135bec;
+  --background-light: #f6f6f8;
+  --background-dark: #101622;
+  --surface-dark: #1a2130;
+}
+
+.light {
+    --primary: #1e90ff;
+    --background-light: #ffffff;
+    --background-dark: #f0f8ff;
+    --surface-dark: #ffffff;
 }
 
 body {
@@ -18,4 +33,22 @@ body {
   outline: 4px solid #e50914;
   outline-offset: 4px;
   z-index: 10;
+}
+
+/* Custom scrollbar hiding for cleaner TV look */
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+.no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+/* Smooth focus ring animation */
+.tv-card {
+    transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.3s ease;
+}
+.tv-card:hover, .tv-card:focus-within {
+    transform: scale(1.05);
+    z-index: 10;
 }
