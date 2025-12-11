@@ -82,7 +82,7 @@ const LiveTVPage: React.FC = () => {
         selectChannel(parseInt(channelId, 10));
         setPlayerActive(true);
     }
-  }, [searchParams, selectCategory, selectChannel, setPlayerActive, categories]);
+  }, [searchParams, selectCategory, selectChannel, setPlayerActive]);
 
   useEffect(() => {
     // Whenever channel changes in player mode, show overlay

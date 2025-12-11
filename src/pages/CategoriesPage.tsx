@@ -5,11 +5,18 @@ import CategoryCard from '../components/layout/CategoryCard';
 import { useLiveStore } from '../store/liveStore';
 import { useNavigate } from 'react-router-dom';
 import { useFocusable } from '@noriginmedia/norigin-spatial-navigation';
+import { useEffect } from 'react';
 
 const CategoriesPage: React.FC = () => {
-  const { categories } = useLiveStore();
+  const { categories, fetchCategories } = useLiveStore();
   const navigate = useNavigate();
   const { ref } = useFocusable();
+
+  useEffect(() => {
+    if (categories.length === 0) {
+        fetchCategories();
+    }
+  }, [categories, fetchCategories]);
 
   const onCategoryPress = (categoryId: string) => {
     // This will be implemented in a later step

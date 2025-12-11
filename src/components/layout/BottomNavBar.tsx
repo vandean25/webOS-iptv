@@ -2,6 +2,7 @@ import React from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import Icon from './Icon';
 import { useFocusable } from '@noriginmedia/norigin-spatial-navigation';
+import { useThemeStore } from '../../store/themeStore';
 
 interface NavItemProps {
   to: string;
@@ -30,13 +31,18 @@ const NavItem: React.FC<NavItemProps> = ({ to, label, icon, focusKey }) => {
 };
 
 const BottomNavBar: React.FC = () => {
+  const { toggleTheme } = useThemeStore();
+
   return (
     <div className="absolute bottom-6 left-0 right-0 flex justify-center z-30 pointer-events-none">
       <nav className="flex items-center gap-1 bg-surface-dark/95 backdrop-blur-md border border-slate-700/50 p-1.5 rounded-full shadow-2xl pointer-events-auto">
         <NavItem to="/favorites" label="Favorites" icon="star" focusKey="NAV_FAVORITES" />
         <NavItem to="/categories" label="Categories" icon="grid_view" focusKey="NAV_CATEGORIES" />
         <NavItem to="/search" label="Search" icon="search" focusKey="NAV_SEARCH" />
-        <button className="flex items-center justify-center size-12 rounded-full text-slate-400 hover:text-white hover:bg-white/10 transition-all focus:ring-2 focus:ring-primary focus:outline-none ml-2 border-l border-slate-700/50">
+        <button
+            onClick={toggleTheme}
+            className="flex items-center justify-center size-12 rounded-full text-slate-400 hover:text-white hover:bg-white/10 transition-all focus:ring-2 focus:ring-primary focus:outline-none ml-2 border-l border-slate-700/50"
+        >
             <Icon icon="settings" />
         </button>
       </nav>

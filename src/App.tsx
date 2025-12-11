@@ -7,6 +7,7 @@ import FavoritesPage from './pages/FavoritesPage';
 import CategoriesPage from './pages/CategoriesPage';
 import SearchPage from './pages/SearchPage';
 import { useAuthStore } from './store/authStore';
+import { useThemeStore } from './store/themeStore';
 
 // Initialize Spatial Navigation
 init({
@@ -26,6 +27,7 @@ const ProtectedRoute = ({ children }: { children: React.ReactElement }) => {
 
 const App: React.FC = () => {
   const { isAuthenticated, checkSession } = useAuthStore();
+  const { theme } = useThemeStore();
 
   useEffect(() => {
     checkSession();
@@ -33,7 +35,7 @@ const App: React.FC = () => {
 
   return (
     <HashRouter>
-      <div className="app-container w-screen h-screen bg-background-dark text-white overflow-hidden font-display">
+      <div className={`app-container w-screen h-screen bg-background-dark text-white overflow-hidden font-display ${theme}`}>
         <Routes>
           <Route path="/login" element={<LoginPage />} />
           <Route

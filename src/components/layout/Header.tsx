@@ -36,7 +36,6 @@ const Header: React.FC<HeaderProps> = ({ title, subtitle }) => {
           >
             <Icon icon="person" className="text-3xl text-slate-400" />
           </div>
-          <div className="absolute bottom-0 right-0 size-3 bg-green-500 rounded-full border-2 border-background-dark"></div>
         </div>
       </div>
     </header>

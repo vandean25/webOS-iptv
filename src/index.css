@@ -3,9 +3,24 @@
 @tailwind utilities;
 
 :root {
-  background-color: #0f0f0f;
-  color: #e5e5e5;
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  --primary: #135bec;
+  --background-light: #f6f6f8;
+  --background-dark: #101622;
+  --surface-dark: #1a2130;
+}
+
+.dark {
+  --primary: #135bec;
+  --background-light: #f6f6f8;
+  --background-dark: #101622;
+  --surface-dark: #1a2130;
+}
+
+.light {
+    --primary: #135bec;
+    --background-light: #ffffff;
+    --background-dark: #f6f6f8;
+    --surface-dark: #ffffff;
 }
 
 body {

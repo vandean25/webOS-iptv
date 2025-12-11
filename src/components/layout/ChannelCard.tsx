@@ -38,7 +38,6 @@ const ChannelCard: React.FC<ChannelCardProps> = ({ channel, onEnterPress }) => {
           style={{ backgroundImage: `url(${channel.logo})` }}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-60 group-hover:opacity-40 transition-opacity" />
-        <div className="absolute top-3 right-3 px-2 py-1 bg-red-600 rounded text-xs font-bold text-white shadow-sm">LIVE</div>
         <div className="absolute bottom-3 left-3 size-10 bg-white/90 rounded-full flex items-center justify-center p-1 shadow-lg">
           <span className="text-black font-bold text-xs">{channel.name}</span>
         </div>
