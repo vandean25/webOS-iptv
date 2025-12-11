@@ -19,3 +19,21 @@ body {
   outline-offset: 4px;
   z-index: 10;
 }
+
+/* Custom scrollbar hiding for cleaner TV look */
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+.no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+/* Smooth focus ring animation */
+.tv-card {
+    transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.3s ease;
+}
+.tv-card:hover, .tv-card:focus-within {
+    transform: scale(1.05);
+    z-index: 10;
+}

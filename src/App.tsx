@@ -2,8 +2,10 @@ import React, { useEffect } from 'react';
 import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { init } from '@noriginmedia/norigin-spatial-navigation';
 import LoginPage from './pages/LoginPage';
-import DashboardPage from './pages/DashboardPage';
 import LiveTVPage from './pages/LiveTVPage';
+import FavoritesPage from './pages/FavoritesPage';
+import CategoriesPage from './pages/CategoriesPage';
+import SearchPage from './pages/SearchPage';
 import { useAuthStore } from './store/authStore';
 
 // Initialize Spatial Navigation
@@ -23,7 +25,7 @@ const ProtectedRoute = ({ children }: { children: React.ReactElement }) => {
 };
 
 const App: React.FC = () => {
-  const { checkSession } = useAuthStore();
+  const { isAuthenticated, checkSession } = useAuthStore();
 
   useEffect(() => {
     checkSession();
@@ -31,14 +33,30 @@ const App: React.FC = () => {
 
   return (
     <HashRouter>
-      <div className="app-container w-screen h-screen bg-background text-text overflow-hidden font-sans">
+      <div className="app-container w-screen h-screen bg-background-dark text-white overflow-hidden font-display">
         <Routes>
           <Route path="/login" element={<LoginPage />} />
           <Route
-            path="/dashboard"
+            path="/favorites"
             element={
               <ProtectedRoute>
-                <DashboardPage />
+                <FavoritesPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/categories"
+            element={
+              <ProtectedRoute>
+                <CategoriesPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/search"
+            element={
+              <ProtectedRoute>
+                <SearchPage />
               </ProtectedRoute>
             }
           />
@@ -50,7 +68,7 @@ const App: React.FC = () => {
               </ProtectedRoute>
             }
           />
-          <Route path="*" element={<Navigate to="/login" replace />} />
+          <Route path="*" element={<Navigate to={isAuthenticated ? "/favorites" : "/login"} replace />} />
         </Routes>
       </div>
     </HashRouter>
