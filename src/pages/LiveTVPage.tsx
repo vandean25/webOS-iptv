@@ -30,7 +30,7 @@ const LiveTVPage: React.FC = () => {
   const [overlayVisible, setOverlayVisible] = useState(false);
   const overlayTimer = React.useRef<NodeJS.Timeout | null>(null);
 
-  const { focusSelf } = useFocusable();
+  const { ref, focusSelf } = useFocusable();
 
   const showOverlay = useCallback(() => {
     setOverlayVisible(true);
@@ -138,7 +138,7 @@ const LiveTVPage: React.FC = () => {
   const selectedCategory = categories.find((c) => c.category_id === selectedCategoryId);
 
   return (
-    <div className="flex flex-col h-screen bg-brand-dark text-white font-sans">
+    <div ref={ref} className="flex flex-col h-screen bg-brand-dark text-white font-sans">
       <SearchView />
       <MainHeader categoryTitle={selectedCategory?.category_name || 'Category'} />
       <main className="flex-grow flex px-6">
@@ -150,7 +150,6 @@ const LiveTVPage: React.FC = () => {
         />
         <ChannelGrid
           channels={channels}
-          selectedChannelId={selectedChannelId}
           onSelectChannel={selectChannel}
           onPlayChannel={(id) => {
             selectChannel(id);

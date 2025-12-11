@@ -3,7 +3,7 @@ import { useFocusable, FocusContext, setFocus } from '@noriginmedia/norigin-spat
 import { useLiveStore } from '../store/liveStore';
 import { ChannelCard } from './ChannelCard';
 import { FocusableInput } from './FocusableInput';
-import { XtreamStream } from '../types/xtream';
+import type { XtreamStream } from '../types/xtream';
 import { useFavorites } from '../hooks/useFavorites';
 
 export const SearchView: React.FC = () => {
@@ -12,7 +12,7 @@ export const SearchView: React.FC = () => {
     searchQuery,
     performSearch,
     allChannels,
-    disableSearch,
+    setSearchActive,
     selectChannel,
     setPlayerActive,
     updateFavorites,
@@ -81,7 +81,7 @@ export const SearchView: React.FC = () => {
                 onPlay={() => {
                   selectChannel(channel.stream_id);
                   setPlayerActive(true);
-                  disableSearch();
+                  setSearchActive(false);
                 }}
                 onToggleFavorite={() => handleToggleFavorite(channel)}
               />

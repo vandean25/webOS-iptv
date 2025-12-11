@@ -8,7 +8,6 @@ import { useFavorites } from '../hooks/useFavorites';
 
 interface ChannelGridProps {
   channels: XtreamStream[];
-  selectedChannelId: number | null;
   onSelectChannel: (id: number) => void;
   onPlayChannel: (id: number) => void;
   isLoading?: boolean;
@@ -16,7 +15,6 @@ interface ChannelGridProps {
 
 export const ChannelGrid: React.FC<ChannelGridProps> = ({
   channels,
-  selectedChannelId,
   onSelectChannel,
   onPlayChannel,
   isLoading,

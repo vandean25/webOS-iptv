@@ -22,9 +22,38 @@ class LoginService {
   public async login(credentials: XtreamCredentials): Promise<XtreamLoginResponse> {
     const { url, username, password } = credentials;
 
-    // Ensure URL ends with / or remove it to construct properly?
-    // Usually Xtream API is at base_url/player_api.php
-    // Let's normalize the URL.
+    // --- MOCK LOGIN BYPASS ---
+    if (username === 'demo' && password === 'demo') {
+        console.log("Using Mock Login Bypass");
+        const mockResponse: XtreamLoginResponse = {
+            user_info: {
+                username: "demo_user",
+                password: "demopassword",
+                message: "Welcome Demo User!",
+                auth: 1,
+                status: "Active",
+                exp_date: "1672531199", // Some future date
+                is_trial: "0",
+                active_cons: "1",
+                created_at: "1577836800",
+                max_connections: "2",
+                allowed_output_formats: ["m3u8", "ts"]
+            },
+            server_info: {
+                url: "demo.url",
+                port: "80",
+                https_port: "443",
+                server_protocol: "http",
+                rtmp_port: "8080",
+                timezone: "UTC",
+                timestamp_now: Math.floor(Date.now() / 1000),
+                time_now: new Date().toISOString()
+            }
+        };
+        this.saveCredentials(credentials);
+        return mockResponse;
+    }
+
     const baseUrl = url.endsWith('/') ? url.slice(0, -1) : url;
     const apiUrl = `${baseUrl}/player_api.php`;
 
@@ -36,8 +65,6 @@ class LoginService {
         }
       });
 
-      // Basic validation: check if user_info exists or auth status
-      // Some APIs return status 200 but logic error in body
       if (response.data?.user_info?.auth === 0) {
         throw new Error('Authentication failed (Invalid Credentials)');
       }
@@ -46,9 +73,7 @@ class LoginService {
         throw new Error('Invalid API response');
       }
 
-      // Save credentials if successful
       this.saveCredentials(credentials);
-
       return response.data;
     } catch (error: any) {
         if (axios.isAxiosError(error)) {

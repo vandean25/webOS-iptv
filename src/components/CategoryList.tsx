@@ -3,7 +3,7 @@ import { useFocusable, FocusContext } from '@noriginmedia/norigin-spatial-naviga
 import classNames from 'classnames';
 import type { XtreamCategory } from '../types/xtream';
 import { Skeleton } from './Skeleton';
-import { useLiveStore, FAVORITES_CATEGORY_ID } from '../store/liveStore';
+import { FAVORITES_CATEGORY_ID } from '../store/liveStore';
 
 interface CategoryListProps {
   categories: XtreamCategory[];
