@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useCallback, useMemo } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useLiveStore } from '../store/liveStore';
 import LiveService from '../services/LiveService';
 import { CategoryList } from '../components/CategoryList';
@@ -9,6 +10,7 @@ import { useFocusable } from '@noriginmedia/norigin-spatial-navigation';
 import { useTVRemote } from '../hooks/useTVRemote';
 
 const LiveTVPage: React.FC = () => {
+  const [searchParams] = useSearchParams();
   const {
     categories,
     channels,
@@ -64,6 +66,23 @@ const LiveTVPage: React.FC = () => {
     fetchCategories();
     focusSelf();
   }, [fetchCategories, focusSelf]);
+
+  useEffect(() => {
+    const channelId = searchParams.get('channelId');
+    const categoryId = searchParams.get('categoryId');
+
+    if (categoryId && categories.length > 0) {
+      const categoryExists = categories.some(c => c.category_id === categoryId);
+      if (categoryExists) {
+        selectCategory(categoryId);
+      }
+    }
+
+    if (channelId) {
+        selectChannel(parseInt(channelId, 10));
+        setPlayerActive(true);
+    }
+  }, [searchParams, selectCategory, selectChannel, setPlayerActive]);
 
   useEffect(() => {
     // Whenever channel changes in player mode, show overlay
