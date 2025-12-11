@@ -4,16 +4,22 @@ export default {
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
+  darkMode: "class",
   theme: {
     extend: {
-      colors: {
-        background: '#0f0f0f',
-        surface: '#1e1e1e',
-        primary: '#e50914', // Netflix-like red, or stick to neutral
-        text: '#e5e5e5',
+       colors: {
+        "primary": "var(--primary)",
+        "background-light": "var(--background-light)",
+        "background-dark": "var(--background-dark)",
+        "surface-dark": "var(--surface-dark)",
       },
-      spacing: {
-        'safe-area': '5%',
+      fontFamily: {
+        "display": ["Space Grotesk", "sans-serif"],
+        "body": ["Noto Sans", "sans-serif"],
+      },
+      borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "2xl": "1rem", "full": "9999px"},
+      boxShadow: {
+        'glow': '0 0 20px -5px rgba(19, 91, 236, 0.5)',
       }
     },
   },

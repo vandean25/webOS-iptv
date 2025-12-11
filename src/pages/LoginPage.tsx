@@ -31,7 +31,7 @@ const LoginPage: React.FC = () => {
 
     try {
       await login({ url, username, password });
-      navigate('/dashboard');
+      navigate('/favorites');
     } catch {
       // Error is handled in store and displayed via state
     }
